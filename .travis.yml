@@ -13,7 +13,12 @@ env:
   - TRAVIS_NODE_VERSION="12.10.0" JOB_NAME="test"
 
 script:
-  - sbt ++$TRAVIS_SCALA_VERSION nodejs_v8/test nodejs_v10/test current/test
+  # https://github.com/scoverage/sbt-scoverage/issues/295
+  - if [[ $JAVA_HOME = *openjdk11* && $TRAVIS_SCALA_VERSION = 2.12.* ]]; then
+      sbt ++$TRAVIS_SCALA_VERSION clean coverage test coverageReport;
+    else
+      sbt ++$TRAVIS_SCALA_VERSION nodejs_v8/test nodejs_v10/test current/test;
+    fi
 
 matrix:
   include:
